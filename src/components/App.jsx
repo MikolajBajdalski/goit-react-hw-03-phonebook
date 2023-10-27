@@ -7,35 +7,49 @@ import { nanoid } from 'nanoid';
 class App extends Component {
   state = {
     contacts: [],
-    filter: ''
+    filter: '',
   };
 
   addContact = (name, number) => {
     const newContact = { id: nanoid(), name, number };
     this.setState(prevState => ({
-      contacts: [...prevState.contacts, newContact]
+      contacts: [...prevState.contacts, newContact],
     }));
   };
 
-  handleFilterChange = (event) => {
+  handleFilterChange = event => {
     this.setState({ filter: event.target.value });
   };
 
-  deleteContact = (contactId) => {
+  deleteContact = contactId => {
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(contact => contact.id !== contactId),
     }));
   };
 
+  componentDidMount() {
+    const savedContacts = JSON.parse(localStorage.getItem('Contacts'));
+    if (savedContacts) {
+      this.setState({ contacts: savedContacts });
+    }
+  }
+
   render() {
     return (
       <div>
         <h1>Phonebook</h1>
-        <ContactForm onAddContact={this.addContact} contacts={this.state.contacts} />
+        <ContactForm
+          onAddContact={this.addContact}
+          contacts={this.state.contacts}
+        />
 
         <h2>Contacts</h2>
         <Filter value={this.state.filter} onChange={this.handleFilterChange} />
-        <ContactList contacts={this.state.contacts} filter={this.state.filter} onDeleteContact={this.deleteContact} />
+        <ContactList
+          contacts={this.state.contacts}
+          filter={this.state.filter}
+          onDeleteContact={this.deleteContact}
+        />
       </div>
     );
   }
